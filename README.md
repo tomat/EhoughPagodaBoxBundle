@@ -17,8 +17,8 @@ A Symfony2 bundle that makes it easy to configure and deploy your app on [Pagoda
 Add to your `composer.json`
 
  ```json
-"require" : {
-    "ehough/pagodabox-bundle" : "dev-master"
+"require": {
+    "ehough/pagodabox-bundle": "dev-master"
 }
 ```
 
@@ -35,7 +35,7 @@ public function registerBundles()
 }
 ```
 
-###Redis Session Storage
+###Feature: Redis Session Storage
 Pagoda Box [strongly recommends](http://blog.pagodabox.com/store-sessions-redis-shared-writable-storage/) that you
 utilize a Redis cache for session storage. This bundle makes this task as easy as possible.
 
@@ -46,20 +46,20 @@ web1:
   php_extensions:
     -redis
 
-  php_session_save_handler : redis
-  php_session_save_path : "tcp://tunnel.pagodabox.com:6379"
+  php_session_save_handler: redis
+  php_session_save_path: "tcp://tunnel.pagodabox.com:6379"
 ```
 
 #####`app/config_prod.yml`
 ```yml
 ehough_pagoda_box:
 
-  use_redis_for_sessions : true
+  use_redis_for_sessions: true
 ```
 
 That's it! Your Symony sessions will now magically be stored safely in Redis.
 
-###Annotations Caching
+###Feature: Better Annotations Caching
 By default, Symfony will use a [file-based cache](http://symfony.com/doc/current/reference/configuration/framework.html#full-default-configuration)
 for its annotations cache. With this bundle we can easily utilize a Pagoda Box cache instead.
 
@@ -67,13 +67,10 @@ for its annotations cache. With this bundle we can easily utilize a Pagoda Box c
 ```yml
 web1:
 
-  php_extensions:    # at least one of these extensions, depending on your app/config_prod.yml
+  php_extensions: # at least one of these
     -redis
     -memcache
     -memcached
-
-  php_session_save_handler : redis
-  php_session_save_path : "tcp://tunnel.pagodabox.com:6379"
 ```
 
 #####`app/config_prod.yml`
@@ -81,21 +78,19 @@ web1:
 ehough_pagoda_box:
 
   annotations_cache:
-
-    type : redis                    # memcache, memcached, or redis
-    pagoda_env_id : CACHE2          # the Pagoda Box cache ID you'd like to use for the annotations cache
+    type: redis             # memcache, memcached, or redis
+    pagoda_env_id: CACHE2   # the Pagoda Box cache ID you'd like to use for the annotations cache
 ```
 The `type` parameter can have a value of `memcache`, `memcached`, or `redis`, depending on the actual type of the
 cache you identify in the `pagoda_env_id` parameter.
 
-###Doctrine DBAL Connection Mapping
+###Feature: Easier Doctrine Connection Configuration
 Pagoda Box [provides instructions](https://github.com/pagodabox/symfony-demo/blob/master/README.mkd)
 on how to configure your Symfony database for their platform. However, this bundle makes the process much easier.
 
 #####`app/config_prod.yml`
 ```yml
 ehough_pagoda_box:
-
   doctrine:
     dbal:
       connections:
@@ -110,7 +105,6 @@ mappings as you like. e.g.
 
 ```yml
 ehough_pagoda_box:
-
   doctrine:
     dbal:
       connections:
@@ -118,6 +112,41 @@ ehough_pagoda_box:
         other: DB2
         another: DB3
 ```
+
+###Feature: Easier Doctrine Cache Configuration
+Out of the box, [Symfony provides in-memory caches](http://symfony.com/doc/current/reference/configuration/doctrine.html)
+for [Doctrine's query, result, and metadata caches](http://docs.doctrine-project.org/en/latest/reference/caching.html#integrating-with-the-orm).
+With this bundle, we can easily configure Doctrine to utilize any number of Pagoda Box memcached instances instead.
+
+#####`Boxfile`
+```yml
+web1:
+
+  php_extensions: # at least one of these
+    -redis
+    -memcache
+    -memcached
+```
+
+#####`app/config_prod.yml`
+```yml
+ehough_pagoda_box:
+  doctrine:
+	orm:
+	  caching:                      # a map of Doctrine ORM entity manager IDs to
+	    default:
+		  metadata:                 # metadata, query, or result
+		    type: memcache          # memcache or memcached
+      		pagoda_env_id: CACHE3 	# the Pagoda Box cache ID. This must be a Memcache cache!
+          query:
+            type: memcache
+            pagoda_env_id: CACHE4
+          result:
+            type: memcache
+            pagoda_env_id: CACHE5
+```
+In the example above, we are configuring the `default` entity manager's metadata, query, and result cache. Each
+cache accepts a type (`memcache` or `memcached`) as well as the Pagoda Box memcached instance identifier.
 
 ###Configuration Reference
 
@@ -128,15 +157,15 @@ ehough_pagoda_box:
 
   annotations_cache:
 
-    type : redis                    # memcache, memcached, or redis
-    pagoda_env_id : CACHE2          # the Pagoda Box cache ID
+    type: redis                    # memcache, memcached, or redis
+    pagoda_env_id: CACHE2          # the Pagoda Box cache ID
 
   doctrine:
 
 	dbal:
 	  connections:                  # a map of Doctrine DBAL connection IDs to Pagoda Box database IDs
-	    default : DB1               # maps the "default" Doctrine DBAL connection to DB1_HOST, DB1_PORT, etc
-	    other : DB2                 # maps the "other" Doctrine DBAL connection to DB2_HOST, DB2_PORT, etc
+	    default: DB1               # maps the "default" Doctrine DBAL connection to DB1_HOST, DB1_PORT, etc
+	    other: DB2                 # maps the "other" Doctrine DBAL connection to DB2_HOST, DB2_PORT, etc
 
 	orm:
 	  caching:                      # a map of Doctrine ORM entity manager IDs to
