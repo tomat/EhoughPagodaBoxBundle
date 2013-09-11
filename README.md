@@ -1,4 +1,4 @@
-## EhoughPagodaBoxBundle [![Build Status](https://secure.travis-ci.org/ehough/pagodabox-bundle.png)](http://travis-ci.org/ehough/pagodabox-bundle)
+## EhoughPagodaBoxBundle [![Build Status](https://secure.travis-ci.org/ehough/EhoughPagodaBoxBundle.png)](http://travis-ci.org/ehough/EhoughPagodaBoxBundle)
 A Symfony2 bundle that makes it easy to configure and deploy your app on [Pagoda Box](https://pagodabox.com/).
 
 ####Features
@@ -54,6 +54,7 @@ web1:
     -<relative path to your Symfony app root>/vendor/ehough/EhoughPagodaBoxBundle/Resources/bash/gopagoda.sh <relative path to your Symfony app root> <optional GitHub OAuth token>
 ```
 This `after_build` script will perform the following:
+
 1. Downloads `composer.phar` from getcomposer.org.
 1. If you supplied a GitHub OAuth token, configures composer to utilize it.
 1. Installs your app's dependencies (`composer install`)
