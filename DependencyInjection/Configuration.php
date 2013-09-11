@@ -129,7 +129,7 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    private static function _appendDoctrineCache($name)
+    public static function _appendDoctrineCache($name)
     {
         $builder         = new TreeBuilder();
         $node            = $builder->root($name);
@@ -166,7 +166,7 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private static function _appendCacheEnvId()
+    public static function _appendCacheEnvId()
     {
         $node           = new ScalarNodeDefinition(Configuration::KEY_CACHE_ID);
         $invalidCacheId = function ($candidate) {
@@ -183,7 +183,7 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private static function _invalidId($prefix, $candidate)
+    public static function _invalidId($prefix, $candidate)
     {
         if (preg_match_all('/^' . $prefix . '[1-9]+[0-9]*$/', $candidate, $matches) !== 1) {
 
