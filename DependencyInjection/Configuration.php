@@ -48,7 +48,7 @@ class Configuration implements ConfigurationInterface
         $treeBuilder                = new TreeBuilder();
         $invalidDbIdentifier        = function ($candidate) {
 
-            return $this->_invalidId('DB', $candidate);
+            return Configuration::_invalidId('DB', $candidate);
         };
         $invalidAnnotationCache = function ($candidate) {
 
@@ -89,7 +89,7 @@ class Configuration implements ConfigurationInterface
                             ->thenInvalid('%s is not a valid annotation cache type. Must be "memcache", "memcached", or "redis". The corresponding PHP extension must also be loaded, along with the corresponding Doctrine cache class.')
                         ->end()
                     ->end()
-                    ->append($this->_appendCacheEnvId())
+                    ->append(Configuration::_appendCacheEnvId())
                 ->end()
             ->end()
             ->arrayNode(Configuration::KEY_DOCTRINE)
@@ -114,9 +114,9 @@ class Configuration implements ConfigurationInterface
                                 ->useAttributeAsKey('name')
                                 ->prototype('array')
                                     ->children()
-                                        ->append($this->_appendDoctrineCache(Configuration::KEY_DOCTRINE_ORM_CACHETYPE_METADATA))
-                                        ->append($this->_appendDoctrineCache(Configuration::KEY_DOCTRINE_ORM_CACHETYPE_QUERY))
-                                        ->append($this->_appendDoctrineCache(Configuration::KEY_DOCTRINE_ORM_CACHETYPE_RESULT))
+                                        ->append(Configuration::_appendDoctrineCache(Configuration::KEY_DOCTRINE_ORM_CACHETYPE_METADATA))
+                                        ->append(Configuration::_appendDoctrineCache(Configuration::KEY_DOCTRINE_ORM_CACHETYPE_QUERY))
+                                        ->append(Configuration::_appendDoctrineCache(Configuration::KEY_DOCTRINE_ORM_CACHETYPE_RESULT))
                                     ->end()
                                 ->end()
                             ->end()
@@ -129,7 +129,7 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    private function _appendDoctrineCache($name)
+    private static function _appendDoctrineCache($name)
     {
         $builder         = new TreeBuilder();
         $node            = $builder->root($name);
@@ -161,17 +161,17 @@ class Configuration implements ConfigurationInterface
                     ->thenInvalid('%s is not a valid cache type for a Doctrine cache. Must be "memcache" or "memcached", and the corresponding PHP extension and Doctrine class must be loaded.')
                 ->end()
             ->end()
-            ->append($this->_appendCacheEnvId());
+            ->append(Configuration::_appendCacheEnvId());
 
         return $node;
     }
 
-    private function _appendCacheEnvId()
+    private static function _appendCacheEnvId()
     {
         $node           = new ScalarNodeDefinition(Configuration::KEY_CACHE_ID);
         $invalidCacheId = function ($candidate) {
 
-            return $this->_invalidId('CACHE', $candidate);
+            return Configuration::_invalidId('CACHE', $candidate);
         };
 
         $node->isRequired()
@@ -183,7 +183,7 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function _invalidId($prefix, $candidate)
+    private static function _invalidId($prefix, $candidate)
     {
         if (preg_match_all('/^' . $prefix . '[1-9]+[0-9]*$/', $candidate, $matches) !== 1) {
 
