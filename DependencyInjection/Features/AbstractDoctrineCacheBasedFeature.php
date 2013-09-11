@@ -98,7 +98,7 @@ abstract class AbstractDoctrineCacheBasedFeature implements FeatureInterface
         ));
         $serverDefinition->addMethodCall('pconnect', $connectParams);
 
-        $serverId = 'ehough_pagoda_box.memcache_instance_' . mt_rand();
+        $serverId = 'ehough_pagoda_box.redis_instance_' . mt_rand();
 
         $container->setDefinition($serverId, $serverDefinition);
 
@@ -129,7 +129,7 @@ abstract class AbstractDoctrineCacheBasedFeature implements FeatureInterface
 
     private function _getRequiredEnvironmentVariables(array $arr)
     {
-        $prefix = $arr[Configuration::KEY_PAGODA_BOX];
+        $prefix = $arr[Configuration::KEY_CACHE_ID];
 
         return array(
 

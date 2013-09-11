@@ -16,3 +16,8 @@ function bigBreak {
     printf "########## $1\n"
     printf "$DELIM\n\n"
 }
+
+if [ "#$" == "0" ]; then
+
+    bigBreak "No Symfony2 directory passed as an argument"
+fi

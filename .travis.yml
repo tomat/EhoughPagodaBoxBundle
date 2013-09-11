@@ -4,6 +4,7 @@ php:
   - 5.4
   - 5.5
 before_script:
+  - phpenv config-add Tests/travis-php-config.ini
   - "mkdir -p ~/.composer"
   - cp Tests/travis-composer-config.json ~/.composer/config.json
   - wget http://getcomposer.org/composer.phar

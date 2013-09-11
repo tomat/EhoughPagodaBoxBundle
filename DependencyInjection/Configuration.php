@@ -48,23 +48,23 @@ class Configuration implements ConfigurationInterface
         $treeBuilder                = new TreeBuilder();
         $invalidDbIdentifier        = function ($candidate) {
 
-            return $this->_invalidId('DB', $candidate);
+            return Configuration::_invalidId('DB', $candidate);
         };
         $invalidAnnotationCache = function ($candidate) {
 
             switch ($candidate) {
 
-                case self::CACHE_TYPE_MEMCACHE:
+                case Configuration::CACHE_TYPE_MEMCACHE:
 
                     return !class_exists('\Memcache', false)
                         || !class_exists('\Doctrine\Common\Cache\MemcacheCache', true);
 
-                case self::CACHE_TYPE_MEMCACHED:
+                case Configuration::CACHE_TYPE_MEMCACHED:
 
                     return !class_exists('\Memcached', false)
                         || !class_exists('\Doctrine\Common\Cache\MemcachedCache', true);
 
-                case self::CACHE_TYPE_REDIS:
+                case Configuration::CACHE_TYPE_REDIS:
 
                     return !class_exists('\Redis', false)
                         || !class_exists('\Doctrine\Common\Cache\RedisCache', true);
@@ -75,28 +75,28 @@ class Configuration implements ConfigurationInterface
             }
         };
 
-        $treeBuilder->root(self::KEY_PAGODA_BOX)->children()
+        $treeBuilder->root(Configuration::KEY_PAGODA_BOX)->children()
 
-            ->booleanNode(self::KEY_STORE_SESSIONS_IN_REDIS)
+            ->booleanNode(Configuration::KEY_STORE_SESSIONS_IN_REDIS)
                 ->defaultFalse()
             ->end()
-            ->arrayNode(self::KEY_ANNOTATIONS_CACHE)
+            ->arrayNode(Configuration::KEY_ANNOTATIONS_CACHE)
                 ->children()
-                    ->scalarNode(self::KEY_CACHE_TYPE)
+                    ->scalarNode(Configuration::KEY_CACHE_TYPE)
                         ->isRequired()
                         ->validate()
                             ->ifTrue($invalidAnnotationCache)
                             ->thenInvalid('%s is not a valid annotation cache type. Must be "memcache", "memcached", or "redis". The corresponding PHP extension must also be loaded, along with the corresponding Doctrine cache class.')
                         ->end()
                     ->end()
-                    ->append($this->_appendCacheEnvId())
+                    ->append(Configuration::_appendCacheEnvId())
                 ->end()
             ->end()
-            ->arrayNode(self::KEY_DOCTRINE)
+            ->arrayNode(Configuration::KEY_DOCTRINE)
                 ->children()
-                    ->arrayNode(self::KEY_DOCTRINE_DBAL)
+                    ->arrayNode(Configuration::KEY_DOCTRINE_DBAL)
                         ->children()
-                            ->arrayNode(self::KEY_DOCTRINE_DBAL_CONNECTIONS)
+                            ->arrayNode(Configuration::KEY_DOCTRINE_DBAL_CONNECTIONS)
                                 ->useAttributeAsKey('name')
                                 ->prototype('scalar')
                                     ->isRequired()
@@ -108,15 +108,15 @@ class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                     ->end()
-                    ->arrayNode(self::KEY_DOCTRINE_ORM)
+                    ->arrayNode(Configuration::KEY_DOCTRINE_ORM)
                         ->children()
-                            ->arrayNode(self::KEY_DOCTRINE_ORM_CACHING)
+                            ->arrayNode(Configuration::KEY_DOCTRINE_ORM_CACHING)
                                 ->useAttributeAsKey('name')
                                 ->prototype('array')
                                     ->children()
-                                        ->append($this->_appendDoctrineCache(self::KEY_DOCTRINE_ORM_CACHETYPE_METADATA))
-                                        ->append($this->_appendDoctrineCache(self::KEY_DOCTRINE_ORM_CACHETYPE_QUERY))
-                                        ->append($this->_appendDoctrineCache(self::KEY_DOCTRINE_ORM_CACHETYPE_RESULT))
+                                        ->append(Configuration::_appendDoctrineCache(Configuration::KEY_DOCTRINE_ORM_CACHETYPE_METADATA))
+                                        ->append(Configuration::_appendDoctrineCache(Configuration::KEY_DOCTRINE_ORM_CACHETYPE_QUERY))
+                                        ->append(Configuration::_appendDoctrineCache(Configuration::KEY_DOCTRINE_ORM_CACHETYPE_RESULT))
                                     ->end()
                                 ->end()
                             ->end()
@@ -129,7 +129,7 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    private function _appendDoctrineCache($name)
+    public static function _appendDoctrineCache($name)
     {
         $builder         = new TreeBuilder();
         $node            = $builder->root($name);
@@ -137,12 +137,12 @@ class Configuration implements ConfigurationInterface
 
             switch ($candidate) {
 
-                case self::CACHE_TYPE_MEMCACHE:
+                case Configuration::CACHE_TYPE_MEMCACHE:
 
                     return !class_exists('\Memcache', false)
                     || !class_exists('\Doctrine\Common\Cache\MemcacheCache', true);
 
-                case self::CACHE_TYPE_MEMCACHED:
+                case Configuration::CACHE_TYPE_MEMCACHED:
 
                     return !class_exists('\Memcached', false)
                     || !class_exists('\Doctrine\Common\Cache\MemcachedCache', true);
@@ -154,24 +154,24 @@ class Configuration implements ConfigurationInterface
         };
 
         $node->children()
-            ->scalarNode(self::KEY_CACHE_TYPE)
+            ->scalarNode(Configuration::KEY_CACHE_TYPE)
                 ->isRequired()
                 ->validate()
                     ->ifTrue($invalidCacheType)
                     ->thenInvalid('%s is not a valid cache type for a Doctrine cache. Must be "memcache" or "memcached", and the corresponding PHP extension and Doctrine class must be loaded.')
                 ->end()
             ->end()
-            ->append($this->_appendCacheEnvId());
+            ->append(Configuration::_appendCacheEnvId());
 
         return $node;
     }
 
-    private function _appendCacheEnvId()
+    public static function _appendCacheEnvId()
     {
-        $node           = new ScalarNodeDefinition(self::KEY_CACHE_ID);
+        $node           = new ScalarNodeDefinition(Configuration::KEY_CACHE_ID);
         $invalidCacheId = function ($candidate) {
 
-            return $this->_invalidId('CACHE', $candidate);
+            return Configuration::_invalidId('CACHE', $candidate);
         };
 
         $node->isRequired()
@@ -183,7 +183,7 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function _invalidId($prefix, $candidate)
+    public static function _invalidId($prefix, $candidate)
     {
         if (preg_match_all('/^' . $prefix . '[1-9]+[0-9]*$/', $candidate, $matches) !== 1) {
 
