@@ -6,15 +6,18 @@ A Symfony2 bundle that makes it easy to configure and deploy your app on [Pagoda
 * Focus on high-performance
   * Never use shared writable directories for Symfony's cache ([why?](http://blog.pagodabox.com/shared-writable-storage-interruption/))
   * Store PHP sessions in Redis ([why?](http://blog.pagodabox.com/store-sessions-redis-shared-writable-storage/))
-* Easily configure Doctrine to use Pagoda Box caches (with no [extra setup](https://github.com/pagodabox/symfony-demo))
-* Full composer support - optionally use your GitHub OAuth token during deployment
+* Easily configure Doctrine connection parameters with [no extra setup](https://github.com/pagodabox/symfony-demo/blob/master/README.mkd)
+* Easily configure Doctrine to utilize Pagoda Box caches
+* Full composer support
+  * Don't check in your `vendor` directory! This bundle installs your dependencies during the build on Pagoda Box.
+  * Optionally utilize a GitHub OAuth to prevent timeouts
 * Excellent test coverage - ready for production
 
 ###Requirements
 * Symfony 2.3+
 
 ###Installation
-Add to your `composer.json`
+Add to your `composer.json`:
 
  ```json
 "require": {
@@ -22,7 +25,7 @@ Add to your `composer.json`
 }
 ```
 
-Then register the bundle in `app/AppKernel.php`.
+Then register the bundle in `app/AppKernel.php`:
 
 ```php
 public function registerBundles()
@@ -34,6 +37,34 @@ public function registerBundles()
     );
 }
 ```
+
+###Feature: Easy Application Deployment
+
+Perhaps the most valuable feature of this bundle is the ability to properly deploy a composer-based Symfony2 app
+to Pagoda Box. You simply need to add an `after_build` script to your `Boxfile`:
+
+#####`Boxfile`
+```yml
+web1:
+
+  shared_writable_dirs:
+    -<relative path to your Symfony app root>/app/logs    # notice: no app/cache directory!
+
+  after_build:
+    -<relative path to your Symfony app root>/vendor/ehough/EhoughPagodaBoxBundle/Resources/bash/gopagoda.sh <relative path to your Symfony app root> <optional GitHub OAuth token>
+```
+This `after_build` script will perform the following:
+# Downloads `composer.phar` from getcomposer.org.
+# If you supplied a GitHub OAuth token, configures composer to utilize it.
+# Installs your app's dependencies (`composer install`)
+# Creates an optimized classloader for maximum classloading peformance (`composer dump-autoload --optimize`)
+# Builds any assetic assets (`app/console" "assetic:dump" --env=prod`)
+# Clears any leftover Symfony cache (`app/console" "cache:clear" --env=prod`)
+# Warms the Symfony cache (`app/console" "cache:warmup" --env=prod`)
+# Triggers an initial HTTP request to Symfony to finish warming the cache (`php web/app.php`)
+
+This will fully prepare your Symfony2 app for production before it's deployed to its final web server. Notice that
+we are *not* using the `app/cache` directory for shared writable storage. Neat!
 
 ###Feature: Redis Session Storage
 Pagoda Box [strongly recommends](http://blog.pagodabox.com/store-sessions-redis-shared-writable-storage/) that you
