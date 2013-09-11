@@ -53,16 +53,16 @@ web1:
   after_build:
     -<relative path to your Symfony app root>/vendor/ehough/EhoughPagodaBoxBundle/Resources/bash/gopagoda.sh <relative path to your Symfony app root> <optional GitHub OAuth token>
 ```
-This `after_build` script will perform the following:
+This `after_build` script will:
 
-1. Downloads `composer.phar` from getcomposer.org.
-1. If you supplied a GitHub OAuth token, configures composer to utilize it.
-1. Installs your app's dependencies (`composer install`)
-1. Creates an optimized classloader for maximum classloading peformance (`composer dump-autoload --optimize`)
-1. Builds any assetic assets (`app/console" "assetic:dump" --env=prod`)
-1. Clears any leftover Symfony cache (`app/console" "cache:clear" --env=prod`)
-1. Warms the Symfony cache (`app/console" "cache:warmup" --env=prod`)
-1. Triggers an initial HTTP request to Symfony to finish warming the cache (`php web/app.php`)
+1. Download `composer.phar` from getcomposer.org.
+1. If you supplied a GitHub OAuth token, configure composer to utilize it.
+1. Install your app's dependencies (`composer install`)
+1. Create an optimized classloader for maximum classloading peformance (`composer dump-autoload --optimize`)
+1. Build any assetic assets (`app/console" "assetic:dump" --env=prod`)
+1. Clear any leftover Symfony cache (`app/console" "cache:clear" --env=prod`)
+1. Warm the Symfony cache (`app/console" "cache:warmup" --env=prod`)
+1. Trigger an initial HTTP request to Symfony to finish warming the cache (`php web/app.php`)
 
 This will fully prepare your Symfony2 app for production before it's deployed to its final web server. Notice that
 we are *not* using the `app/cache` directory for shared writable storage. Neat!
