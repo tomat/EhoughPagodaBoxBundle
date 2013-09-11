@@ -10,7 +10,20 @@
 #
 
 MY_DIR=`dirname $0`
+source $MY_DIR/init.sh
 
-$MY_DIR/install_composer.sh $1
-$MY_DIR/run_composer.sh $1
+$MY_DIR/install_composer.sh $2
+
+if [ $? -ne 0 ]; then
+    bigBreak "Composer installation failed. Stopping."
+    exit 1
+fi
+
+$MY_DIR/install_dependencies.sh $1
+
+if [ $? -ne 0 ]; then
+    bigBreak "Dependency installation failed. Stopping."
+    exit 1
+fi
+
 $MY_DIR/warm_symfony_cache.sh $1

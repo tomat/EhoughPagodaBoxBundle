@@ -1,8 +1,0 @@
-ehough_email_errors:
-  to: http://ehough.com
-  from: noreply@tubepress.org
-  handle:
-    warnings: true
-    exceptions: true
-    http_404: true
-    errors: true

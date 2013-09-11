@@ -18,13 +18,31 @@ if [ ! -f "~/composer.phar" ]
         curl -s http://getcomposer.org/composer.phar > ~/composer.phar
 fi
 
-mkdir -p ~/.composer
+if [ ! -f ~/composer.phar ]; then
 
-if [ ! -f ~/composer.phar ]
-    then
         bigBreak "Could not install composer"
         exit 1
+
     else
         bigBreak "composer is installed and ready"
-        exit 0
 fi
+
+if [ "$#" == "2" ]; then
+
+    if [ ! -d ~/.composer ]; then
+
+        mkdir -p ~/.composer
+    fi
+
+    echo "
+        {
+            \"config\": {
+                \"github-oauth\": {
+                    \"github.com\" : \"$1\"
+                }
+            }
+        }
+        " >> ~/.composer/config.json
+fi
+
+exit 0
