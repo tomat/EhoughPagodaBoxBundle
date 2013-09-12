@@ -8,22 +8,159 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
+# This file is meant to be operated on the Pagoda Box platform only.
 
-MY_DIR=`dirname $0`
-source $MY_DIR/init.sh
+function log () {
 
-$MY_DIR/install_composer.sh $2
+	DELIM="#####################################################################################################"
+	printf "\n\n$DELIM\n"
+	printf "########## $1\n"
+	printf "$DELIM\n\n"
+}
 
-if [ $? -ne 0 ]; then
-    bigBreak "Composer installation failed. Stopping."
-    exit 1
-fi
+function checkArgs () {
 
-$MY_DIR/install_dependencies.sh $1
+	if [ ! -d "$1" ]; then
 
-if [ $? -ne 0 ]; then
-    bigBreak "Dependency installation failed. Stopping."
-    exit 1
-fi
+		log "No Symfony2 directory passed as an argument"
+		exit 1
+	fi
 
-$MY_DIR/warm_symfony_cache.sh $1
+	log "Installing Symfony2 app at $1"
+}
+
+function downloadComposer () {
+
+	if [ ! -f "~/composer.phar" ]; then
+
+		log "composer doesn't exist. Downloading it now..."
+		curl -sS http://getcomposer.org/composer.phar > ~/composer.phar
+	fi
+
+	if [ ! -f ~/composer.phar ]; then
+
+		log "Could not install composer"
+		exit 1
+
+	else
+
+		log "composer is installed and ready"
+	fi
+}
+
+function configureComposer () {
+
+	if [ "$1" != "" ]; then
+
+		if [ ! -d ~/.composer ]; then
+
+			mkdir -p ~/.composer
+		fi
+
+		if [ -f ~/.composer/config.json ]; then
+
+			return
+		fi
+
+		echo "
+			{
+				\"config\": {
+					\"github-oauth\": {
+						\"github.com\" : \"$1\"
+					}
+				}
+			}
+			" >> ~/.composer/config.json
+	fi
+}
+
+function installDependencies () {
+
+	PWD=`pwd`
+
+	log "Installing dependencies defined in $PWD/composer.json into $PWD/vendor"
+
+	php ~/composer.phar install
+
+	if [ $? -ne 0 ]; then
+
+		log "Dependency installation failed"
+		exit 1
+	fi
+}
+
+function optimizeClassloader () {
+
+	log "Dumping and optimizing composer's autoloader"
+
+	php ~/composer.phar dump-autoload --optimize
+
+	if [ $? -ne 0 ]; then
+
+		log "Dumping and optimizing composer's autoloader failed"
+		exit 1
+	fi
+}
+
+function dumpAssetic () {
+
+	log "Dumping assetic assets"
+	php "./app/console" "assetic:dump" --env=prod
+
+	if [ $? -ne 0 ]; then
+
+		log "Dumping of assetic assets failed"
+		exit 1
+	fi
+}
+
+function clearSymfonyCache () {
+
+	log "Clearing any Symfony cache"
+	php "./app/console" "cache:clear" --env=prod
+
+	if [ $? -ne 0 ]; then
+
+		log "Clearing cache failed"
+		exit 1
+	fi
+}
+
+function warmSymfonyCache () {
+
+	log "Warming up the Symfony cache"
+	php "./app/console" "cache:warmup" --env=prod
+
+	if [ $? -ne 0 ]; then
+
+		log "Cache warmup failed"
+		exit 1
+	fi
+}
+
+function triggerInitialHttpRequest () {
+
+	log "Triggering an initial HTTP request for Symfony to finish warming the cache"
+	php "./web/app.php" > /dev/null
+
+	if [ $? -ne 0 ]; then
+
+		log "Initial HTTP request failed"
+		exit 1
+	fi
+
+	log "Symfony's cache is fully warmed up"
+}
+
+checkArgs $1
+downloadComposer
+configureComposer $2
+cd $1
+installDependencies
+optimizeClassloader
+dumpAssetic
+clearSymfonyCache
+warmSymfonyCache
+triggerInitialHttpRequest
+
+log "Your Symfony2 app is ready!"
