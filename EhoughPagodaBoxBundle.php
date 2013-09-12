@@ -47,7 +47,7 @@ class EhoughPagodaBoxBundle extends Bundle
             new AliasSwappingCompilerPass(
 
                 AnnotationsCacheFeature::ALIAS_ID_ORIGINAL_ANNOTATIONS_READER,
-                AnnotationsCacheFeature::SERVICE_ID_ANNOTATIONS_READER),
+                AnnotationsCacheFeature::SERVICE_ID_ANNOTATION_READER),
 
             new DoctrineConnectionMappingCompilerPass(),
             new DoctrineOrmCachingCompilerPass(),

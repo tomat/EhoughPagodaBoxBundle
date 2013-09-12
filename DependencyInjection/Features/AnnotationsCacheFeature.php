@@ -20,8 +20,8 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class AnnotationsCacheFeature extends AbstractDoctrineCacheBasedFeature
 {
-    const SERVICE_ID_ANNOTATIONS_READER        = 'ehough_pagoda_box.annotations_reader';
-    const ALIAS_ID_ORIGINAL_ANNOTATIONS_READER = 'annotations.reader';
+    const SERVICE_ID_ANNOTATION_READER         = 'ehough_pagoda_box.annotation_reader';
+    const ALIAS_ID_ORIGINAL_ANNOTATIONS_READER = 'annotation_reader';
 
     private static $_SERVICE_ID_ANNOTATIONS_READER_CACHE = 'ehough_pagoda_box.annotations_reader_cache';
 
@@ -88,7 +88,7 @@ class AnnotationsCacheFeature extends AbstractDoctrineCacheBasedFeature
          */
         $container->register(
 
-            self::SERVICE_ID_ANNOTATIONS_READER,
+            self::SERVICE_ID_ANNOTATION_READER,
             'Doctrine\Common\Annotations\CachedReader'
 
         )->addArgument(new Reference(self::ALIAS_ID_ORIGINAL_ANNOTATIONS_READER))
