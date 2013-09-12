@@ -78,7 +78,7 @@ class AnnotationsCacheFeatureTest extends \PHPUnit_Framework_TestCase
 
         $this->_mockContainer->shouldReceive('addArgument')->once()->with(\Mockery::on(function ($reference) {
 
-            return $reference instanceof Reference && "$reference" === AnnotationsCacheFeature::ALIAS_ID_ORIGINAL_ANNOTATIONS_READER;
+            return $reference instanceof Reference && "$reference" === 'annotations.reader';
         }))->andReturn($this->_mockContainer);
 
         $this->_mockContainer->shouldReceive('addArgument')->once()->with(\Mockery::on(function ($reference) {
