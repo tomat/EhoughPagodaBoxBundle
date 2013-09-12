@@ -102,25 +102,11 @@ function optimizeClassloader () {
 	fi
 }
 
-function dumpAssetic () {
-
-	log "Dumping assetic assets"
-	php "./app/console" "assetic:dump" --env=prod
-
-	if [ $? -ne 0 ]; then
-
-		log "Dumping of assetic assets failed"
-		exit 1
-	fi
-}
-
-
 checkArgs $1
 downloadComposer
 configureComposer $2
 cd $1
 installDependencies
 optimizeClassloader
-dumpAssetic
 
 log "Composer tasks complete for $1"

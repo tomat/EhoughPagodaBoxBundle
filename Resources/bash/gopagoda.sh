@@ -47,6 +47,18 @@ function clearSymfonyCache () {
 	runConsoleCommand "cache:clear"
 }
 
+function dumpAssetic () {
+
+	log "Dumping assetic assets"
+	php "./app/console" "assetic:dump" --env=prod
+
+	if [ $? -ne 0 ]; then
+
+		log "Dumping of assetic assets failed"
+		exit 1
+	fi
+}
+
 function warmSymfonyCache () {
 
 	log "Warming up the Symfony cache"
@@ -70,6 +82,7 @@ function triggerInitialHttpRequest () {
 
 performComposerInstallation $1 $2
 clearSymfonyCache
+dumpAssetic
 warmSymfonyCache
 triggerInitialHttpRequest
 
