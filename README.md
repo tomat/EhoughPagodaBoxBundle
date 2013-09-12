@@ -41,7 +41,7 @@ public function registerBundles()
 ###Feature: Easy Application Deployment
 
 Perhaps the most valuable feature of this bundle is the ability to properly deploy a composer-based Symfony2 app
-to Pagoda Box. You simply need to add an `after_build` script:
+to Pagoda Box. You simply need to add a few `after_build` scripts:
 
 #####`Boxfile`
 ```yml
@@ -51,9 +51,12 @@ web1:
     -<relative path to your Symfony app root>/app/logs    # notice: no app/cache directory!
 
   after_build:
-    -<relative path to your Symfony app root>/vendor/ehough/EhoughPagodaBoxBundle/Resources/bash/gopagoda.sh <relative path to your Symfony app root> <optional GitHub OAuth token>
+    - wget --quiet https://raw.github.com/ehough/EhoughPagodaBoxBundle/develop/Resources/bash/gopagoda.sh
+    - chmod a+x ./gopagoda.sh
+    - ./gopagoda.sh <relative path to your Symfony app root> <optional GitHub OAuth token>
 ```
-This `after_build` script will:
+The three `after_build` steps above effectively download and execute `gopagoda.sh`, which will do the
+following for you:
 
 1. Download `composer.phar` from getcomposer.org.
 1. If you supplied a GitHub OAuth token, configure composer to utilize it.
