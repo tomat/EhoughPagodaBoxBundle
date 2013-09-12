@@ -72,7 +72,7 @@ class AnnotationsCacheFeatureTest extends \PHPUnit_Framework_TestCase
 
         $this->_mockContainer->shouldReceive('register')->once()->with(
 
-            AnnotationsCacheFeature::SERVICE_ID_ANNOTATIONS_READER,
+            AnnotationsCacheFeature::SERVICE_ID_ANNOTATION_READER,
             'Doctrine\Common\Annotations\CachedReader'
         )->andReturn($this->_mockContainer);
 

@@ -10,132 +10,48 @@
 #
 # This file is meant to be operated on the Pagoda Box platform only.
 
-function log () {
+function performComposerInstallation () {
 
-	DELIM="#####################################################################################################"
-	printf "\n\n$DELIM\n"
-	printf "########## $1\n"
-	printf "$DELIM\n\n"
+    wget --quiet https://raw.github.com/ehough/EhoughPagodaBoxBundle/master/Resources/bash/composer_installer.sh
+
+    if [ ! -f composer_installer.sh ]; then
+
+        printf "Could not download composer bootstrap script\n"
+        exit 1
+    fi
+
+    source ./composer_installer.sh $1 $2
+
+    if [ $? -ne 0 ]; then
+
+       	printf "Failed to install composer dependencies\n"
+       	exit 1
+    fi
 }
 
-function checkArgs () {
+function runConsoleCommand() {
 
-	if [ ! -d "$1" ]; then
+    php "./app/console" "$1" --env=prod
 
-		log "No Symfony2 directory passed as an argument"
-		exit 1
-	fi
+    if [ $? -ne 0 ]; then
 
-	log "Installing Symfony2 app at $1"
-}
-
-function downloadComposer () {
-
-	if [ ! -f "~/composer.phar" ]; then
-
-		log "composer doesn't exist. Downloading it now..."
-		curl -sS http://getcomposer.org/composer.phar > ~/composer.phar
-	fi
-
-	if [ ! -f ~/composer.phar ]; then
-
-		log "Could not install composer"
-		exit 1
-
-	else
-
-		log "composer is installed and ready"
-	fi
-}
-
-function configureComposer () {
-
-	if [ "$1" != "" ]; then
-
-		if [ ! -d ~/.composer ]; then
-
-			mkdir -p ~/.composer
-		fi
-
-		if [ -f ~/.composer/config.json ]; then
-
-			return
-		fi
-
-		echo "
-			{
-				\"config\": {
-					\"github-oauth\": {
-						\"github.com\" : \"$1\"
-					}
-				}
-			}
-			" >> ~/.composer/config.json
-	fi
-}
-
-function installDependencies () {
-
-	PWD=`pwd`
-
-	log "Installing dependencies defined in $PWD/composer.json into $PWD/vendor"
-
-	php ~/composer.phar install
-
-	if [ $? -ne 0 ]; then
-
-		log "Dependency installation failed"
-		exit 1
-	fi
-}
-
-function optimizeClassloader () {
-
-	log "Dumping and optimizing composer's autoloader"
-
-	php ~/composer.phar dump-autoload --optimize
-
-	if [ $? -ne 0 ]; then
-
-		log "Dumping and optimizing composer's autoloader failed"
-		exit 1
-	fi
-}
-
-function dumpAssetic () {
-
-	log "Dumping assetic assets"
-	php "./app/console" "assetic:dump" --env=prod
-
-	if [ $? -ne 0 ]; then
-
-		log "Dumping of assetic assets failed"
-		exit 1
-	fi
+    	log "$1 failed"
+    	exit 1
+    fi
 }
 
 function clearSymfonyCache () {
 
 	log "Clearing any Symfony cache"
-	php "./app/console" "cache:clear" --env=prod
 
-	if [ $? -ne 0 ]; then
-
-		log "Clearing cache failed"
-		exit 1
-	fi
+	runConsoleCommand "cache:clear"
 }
 
 function warmSymfonyCache () {
 
 	log "Warming up the Symfony cache"
-	php "./app/console" "cache:warmup" --env=prod
 
-	if [ $? -ne 0 ]; then
-
-		log "Cache warmup failed"
-		exit 1
-	fi
+	runConsoleCommand "cache:warmup"
 }
 
 function triggerInitialHttpRequest () {
@@ -152,13 +68,7 @@ function triggerInitialHttpRequest () {
 	log "Symfony's cache is fully warmed up"
 }
 
-checkArgs $1
-downloadComposer
-configureComposer $2
-cd $1
-installDependencies
-optimizeClassloader
-dumpAssetic
+performComposerInstallation $1 $2
 clearSymfonyCache
 warmSymfonyCache
 triggerInitialHttpRequest

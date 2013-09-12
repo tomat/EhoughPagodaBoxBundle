@@ -10,7 +10,7 @@ A Symfony2 bundle that makes it easy to configure and deploy your app on [Pagoda
 * Easily configure Doctrine to utilize Pagoda Box caches
 * Full composer support
   * Don't check in your `vendor` directory! This bundle installs your dependencies during the build on Pagoda Box.
-  * Optionally utilize a GitHub OAuth to prevent timeouts
+  * Optionally utilize a GitHub OAuth token to prevent timeouts
 * Excellent test coverage - ready for production
 
 ###Requirements
@@ -30,7 +30,7 @@ Then register the bundle in `app/AppKernel.php`:
 ```php
 public function registerBundles()
 {
-    return array(Boxfile
+    return array(
 
         // ...
         new Ehough\Bundle\PagodaBoxBundle\EhoughPagodaBoxBundle()
@@ -41,7 +41,7 @@ public function registerBundles()
 ###Feature: Easy Application Deployment
 
 Perhaps the most valuable feature of this bundle is the ability to properly deploy a composer-based Symfony2 app
-to Pagoda Box. You simply need to add a few `after_build` scripts:
+to Pagoda Box. Simply add the following two `after_build` steps:
 
 #####`Boxfile`
 ```yml
@@ -51,11 +51,10 @@ web1:
     -<relative path to your Symfony app root>/app/logs    # notice: no app/cache directory!
 
   after_build:
-    - wget --quiet https://raw.github.com/ehough/EhoughPagodaBoxBundle/develop/Resources/bash/gopagoda.sh
-    - chmod a+x ./gopagoda.sh
-    - ./gopagoda.sh <relative path to your Symfony app root> <optional GitHub OAuth token>
+    - wget --quiet https://raw.github.com/ehough/EhoughPagodaBoxBundle/master/Resources/bash/gopagoda.sh
+    - bash ./gopagoda.sh <relative path to your Symfony app root> <optional GitHub OAuth token>
 ```
-The three `after_build` steps above effectively download and execute `gopagoda.sh`, which will do the
+The two `after_build` steps above effectively download and execute `gopagoda.sh`, which will do the
 following for you:
 
 1. Download `composer.phar` from getcomposer.org.
