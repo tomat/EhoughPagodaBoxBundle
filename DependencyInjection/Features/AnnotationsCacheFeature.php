@@ -91,7 +91,7 @@ class AnnotationsCacheFeature extends AbstractDoctrineCacheBasedFeature
             self::SERVICE_ID_ANNOTATION_READER,
             'Doctrine\Common\Annotations\CachedReader'
 
-        )->addArgument(new Reference(self::ALIAS_ID_ORIGINAL_ANNOTATIONS_READER))
+        )->addArgument(new Reference('annotations.reader'))
          ->addArgument(new Reference(self::$_SERVICE_ID_ANNOTATIONS_READER_CACHE))
          ->addArgument($container->getParameter('kernel.debug'));
     }
