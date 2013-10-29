@@ -36,13 +36,6 @@ class RedisSessionHandlerFeature implements FeatureInterface
             return false;
         }
 
-        if (!$this->__isRedisExtensionLoaded()
-            || !$this->__isSessionHandlerSetupCorrectly()
-            || !$this->__isSessionPathSetupCorrectly()) {
-
-            return false;
-        }
-
         return true;
     }
 
@@ -56,22 +49,5 @@ class RedisSessionHandlerFeature implements FeatureInterface
             self::SERVICE_ID_SESSION_HANDLER,
             'Symfony\Component\HttpFoundation\Session\Storage\Handler\NativeSessionHandler'
         );
-    }
-
-    public function __isSessionPathSetupCorrectly()
-    {
-        $sessionSavePath = ini_get('session.save_path');
-
-        return preg_match_all('~^tcp://[^:]+:6379/?$~', $sessionSavePath, $matches) === 1;
-    }
-
-    public function __isSessionHandlerSetupCorrectly()
-    {
-        return ini_get('session.save_handler') === 'redis';
-    }
-
-    public function __isRedisExtensionLoaded()
-    {
-        return class_exists('Redis', false);
     }
 }

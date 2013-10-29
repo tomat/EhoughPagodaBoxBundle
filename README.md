@@ -88,7 +88,7 @@ web1:
 ```yml
 ehough_pagoda_box:
 
-  use_redis_for_sessions: true
+  store_sessions_in_redis: true
 ```
 
 That's it! Your Symony sessions will now magically be stored safely in Redis.
@@ -187,7 +187,7 @@ cache accepts a type (`memcache` or `memcached`) as well as the Pagoda Box memca
 ```yml
 ehough_pagoda_box:
 
-  use_redis_for_sessions: true      # use Redis for session storage?
+  store_sessions_in_redis: true      # use Redis for session storage?
 
   annotations_cache:
 
