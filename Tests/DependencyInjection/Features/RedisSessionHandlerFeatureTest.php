@@ -35,33 +35,7 @@ class RedisSessionHandlerFeatureTest extends \PHPUnit_Framework_TestCase
         $this->_mockContainer = \Mockery::mock('\Symfony\Component\DependencyInjection\ContainerBuilder');
     }
 
-    public function testBadSessionPath()
-    {
-        $old = ini_set('session.save_path', 'tcp://something.com:379');
 
-        $this->assertFalse($this->_sut->__isSessionPathSetupCorrectly());
-
-        ini_set('session.save_path', $old);
-    }
-
-    public function testGoodSessionPath()
-    {
-        $old = ini_set('session.save_path', 'tcp://something.com:6379');
-
-        $this->assertTrue($this->_sut->__isSessionPathSetupCorrectly());
-
-        ini_set('session.save_path', $old);
-    }
-
-    public function testExtensionLoaded()
-    {
-        $this->assertFalse($this->_sut->__isRedisExtensionLoaded());
-    }
-
-    public function testSessionHandler()
-    {
-        $this->assertFalse($this->_sut->__isSessionHandlerSetupCorrectly());
-    }
 
     public function testAct()
     {
