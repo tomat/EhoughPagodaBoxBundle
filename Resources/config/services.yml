@@ -1,0 +1,6 @@
+services:
+  ehough_pagoda_box_bundle.twig_bridge_template_warmer:
+    class: Ehough\Bundle\PagodaBoxBundle\CacheWarmer\TwigBridgeTemplateWarmer
+    arguments: [ @twig ]
+    tags:
+      - { name: kernel.cache_warmer }

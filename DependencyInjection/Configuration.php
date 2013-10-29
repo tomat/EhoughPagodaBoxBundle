@@ -64,11 +64,6 @@ class Configuration implements ConfigurationInterface
                     return !class_exists('\Memcached', false)
                         || !class_exists('\Doctrine\Common\Cache\MemcachedCache', true);
 
-                case Configuration::CACHE_TYPE_REDIS:
-
-                    return !class_exists('\Redis', false)
-                        || !class_exists('\Doctrine\Common\Cache\RedisCache', true);
-
                 default:
 
                     return true;
@@ -86,7 +81,7 @@ class Configuration implements ConfigurationInterface
                         ->isRequired()
                         ->validate()
                             ->ifTrue($invalidAnnotationCache)
-                            ->thenInvalid('%s is not a valid annotation cache type. Must be "memcache", "memcached", or "redis". The corresponding PHP extension must also be loaded, along with the corresponding Doctrine cache class.')
+                            ->thenInvalid('%s is not a valid annotation cache type. Must be "memcache" or "memcached". The corresponding PHP extension must also be loaded, along with the corresponding Doctrine cache class.')
                         ->end()
                     ->end()
                     ->append(Configuration::_appendCacheEnvId())

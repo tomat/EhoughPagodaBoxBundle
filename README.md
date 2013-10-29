@@ -102,7 +102,6 @@ for its annotations cache. With this bundle we can easily utilize a Pagoda Box c
 web1:
 
   php_extensions: # at least one of these
-    -redis
     -memcache
     -memcached
 ```
@@ -112,7 +111,7 @@ web1:
 ehough_pagoda_box:
 
   annotations_cache:
-    type: redis             # memcache, memcached, or redis
+    type: memcached         # memcache or memcached
     pagoda_env_id: CACHE2   # the Pagoda Box cache ID you'd like to use for the annotations cache
 ```
 The `type` parameter can have a value of `memcache`, `memcached`, or `redis`, depending on the actual type of the
@@ -187,19 +186,19 @@ cache accepts a type (`memcache` or `memcached`) as well as the Pagoda Box memca
 ```yml
 ehough_pagoda_box:
 
-  store_sessions_in_redis: true      # use Redis for session storage?
+  store_sessions_in_redis: true     # use Redis for session storage?
 
   annotations_cache:
 
-    type: redis                    # memcache, memcached, or redis
-    pagoda_env_id: CACHE2          # the Pagoda Box cache ID
+    type: redis                     # memcache or memcached
+    pagoda_env_id: CACHE2           # the Pagoda Box cache ID
 
   doctrine:
 
 	dbal:
 	  connections:                  # a map of Doctrine DBAL connection IDs to Pagoda Box database IDs
-	    default: DB1               # maps the "default" Doctrine DBAL connection to DB1_HOST, DB1_PORT, etc
-	    other: DB2                 # maps the "other" Doctrine DBAL connection to DB2_HOST, DB2_PORT, etc
+	    default: DB1                # maps the "default" Doctrine DBAL connection to DB1_HOST, DB1_PORT, etc
+	    other: DB2                  # maps the "other" Doctrine DBAL connection to DB2_HOST, DB2_PORT, etc
 
 	orm:
 	  caching:                      # a map of Doctrine ORM entity manager IDs to
