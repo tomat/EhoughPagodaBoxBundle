@@ -18,6 +18,7 @@ use Ehough\Bundle\PagodaBoxBundle\DependencyInjection\Features\DoctrineConnectio
 use Ehough\Bundle\PagodaBoxBundle\DependencyInjection\Features\DoctrineOrmCacheFeature;
 use Ehough\Bundle\PagodaBoxBundle\DependencyInjection\Features\RedisSessionHandlerFeature;
 use Ehough\Bundle\PagodaBoxBundle\EhoughPagodaBoxBundle;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
@@ -68,5 +69,9 @@ class EhoughPagodaBoxExtension extends Extension
                 $feature->act($processedConfiguration, $container);
             }
         }
+
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+
+        $loader->load('services.yml');
     }
 }
