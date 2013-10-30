@@ -49,7 +49,14 @@ class TwigBridgeTemplateWarmer implements CacheWarmerInterface
 
     private function _warmBridgeTemplate($name)
     {
-        $this->_twigEnvironment->loadTemplate('form_' . $name . '_layout.html.twig');
+        try {
+
+            $this->_twigEnvironment->loadTemplate('form_' . $name . '_layout.html.twig');
+        
+        } catch (\Twig_Error $e) {
+
+            return;
+        }
     }
 
     /**
