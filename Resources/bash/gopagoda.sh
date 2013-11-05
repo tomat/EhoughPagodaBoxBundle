@@ -40,13 +40,6 @@ function runConsoleCommand() {
     fi
 }
 
-function clearSymfonyCache () {
-
-	log "Clearing any Symfony cache"
-
-	runConsoleCommand "cache:clear"
-}
-
 function dumpAssetic () {
 
 	log "Dumping assetic assets"
@@ -81,7 +74,6 @@ function triggerInitialHttpRequest () {
 }
 
 performComposerInstallation $1 $2
-clearSymfonyCache
 dumpAssetic
 warmSymfonyCache
 triggerInitialHttpRequest
