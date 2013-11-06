@@ -60,8 +60,10 @@ abstract class AbstractDoctrineCacheBasedFeature implements FeatureInterface
     private function _buildDoctrineMemcachedDefinition($persistentId, array $cacheSettings, ContainerBuilder $container)
     {
         $serverDefinition = new Definition('Memcached');
+        $serverDefinition->setFactoryClass('Ehough\Bundle\PagodaBoxBundle\Cache\MemcachedFactory');
+        $serverDefinition->setFactoryMethod('getInstance');
         $serverDefinition->addArgument($persistentId);
-        $serverDefinition->addMethodCall('addServer', $this->_getHostAndPortArray($cacheSettings));
+        $serverDefinition->addArgument($this->_getHostAndPortArray($cacheSettings));
 
         $serverId = 'ehough_pagoda_box.memcached_instance_' . mt_rand();
 
