@@ -4,3 +4,7 @@ services:
     arguments: [ @twig ]
     tags:
       - { name: kernel.cache_warmer }
+  ehough_pagoda_box_bundle.jms_metadata.memcached_cache:
+    class: Ehough\Bundle\PagodaBoxBundle\Cache\DoctrineCacheAdapter
+    lazy: true
+    arguments: ["jms_metadata", @service_container]

@@ -25,11 +25,15 @@ class EhoughPagodaBoxBundle extends Bundle
         parent::build($container);
 
         $compilerPasses = $this->_getCompilerPassArray();
-
+        $config = $container->getCompiler()->getPassConfig();
+        $passes = $config->getBeforeOptimizationPasses();
         foreach ($compilerPasses as $compilerPass) {
-
-            $container->addCompilerPass($compilerPass);
+            array_unshift(
+                $passes,
+                $compilerPass
+            );
         }
+        $config->setBeforeOptimizationPasses($passes);
     }
 
     /**
@@ -38,7 +42,10 @@ class EhoughPagodaBoxBundle extends Bundle
     private function _getCompilerPassArray()
     {
         return array(
-
+            new AliasSwappingCompilerPass(
+                'jms_di_extra.metadata.cache',
+                'ehough_pagoda_box_bundle.jms_metadata.memcached_cache'
+            ),
             new AliasSwappingCompilerPass(
 
                 RedisSessionHandlerFeature::ALIAS_ID_ORIGINAL_SESSION_HANDLER,
